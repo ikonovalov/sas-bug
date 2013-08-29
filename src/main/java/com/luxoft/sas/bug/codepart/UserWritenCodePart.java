@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 public class UserWritenCodePart extends SimpleCodePart {
 
-    private static final Pattern START_PATTERN = Pattern.compile("(.+Transform:\\s+User Written(.*))");
-    private static final Pattern END_PATTERN =  Pattern.compile("(.+End of User Written Code.+)");
+    private static final Pattern START_PATTERN = Pattern.compile("Transform:\\s+User Written");
+    private static final Pattern END_PATTERN =  Pattern.compile("End of User Written Code");
 
     public static final CodePartIteratorFactory<UserWritenCodePart> FACTORY = new CodePartIteratorFactory<UserWritenCodePart>() {
         public Iterator<UserWritenCodePart> getIterator(CharSequence code) {
