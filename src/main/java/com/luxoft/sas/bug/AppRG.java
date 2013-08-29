@@ -2,7 +2,6 @@ package com.luxoft.sas.bug;
 
 import com.luxoft.sas.bug.codepart.CodePart;
 import com.luxoft.sas.bug.codepart.UserWritenCodePart;
-import com.luxoft.sas.bug.metric.Metrics;
 import org.apache.commons.cli.*;
 
 import java.io.File;
@@ -49,7 +48,8 @@ public class AppRG {
                     Metrics.PREPROCESS,
                     Metrics.POSTPROCESS,
                     Metrics.GLOBAL,
-                    Metrics.ERRORCHECK
+                    Metrics.ERRORCHECK,
+                    Metrics.SQLPROC_JOINS
             };
             for (Metrics element : metrics) {
                 boolean applicable = element.metric().applicable(uwc);

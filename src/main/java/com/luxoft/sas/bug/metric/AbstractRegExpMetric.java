@@ -9,7 +9,7 @@ public class AbstractRegExpMetric implements Metric {
 
     private final Pattern pattern;
 
-    protected AbstractRegExpMetric(String pattern) {
+    public AbstractRegExpMetric(String pattern) {
         this.pattern = Pattern.compile(pattern);
     }
 
@@ -17,7 +17,6 @@ public class AbstractRegExpMetric implements Metric {
         Matcher matcher = pattern.matcher(part.getCodeContent());
         return matcher.find();
     }
-
 
     @Override
     public String toString() {
