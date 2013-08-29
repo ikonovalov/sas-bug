@@ -1,6 +1,7 @@
 package com.luxoft.sas.bug;
 
 import com.luxoft.sas.bug.metric.Metrics;
+import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,8 +16,23 @@ import java.util.Iterator;
  */
 public class AppRG {
 
-    public static void main(String[] args) throws FileNotFoundException {
-        File f = new File(args[0]);
+    private static final Options OPTIONS = new Options();
+    static {
+        OPTIONS.addOption("f", true, "SAS code file");
+    }
+
+    public static void main(String[] args) throws FileNotFoundException, ParseException {
+        // check parameters
+        if (args.length == 0) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp( AppRG.class.getSimpleName(), OPTIONS );
+            return;
+        }
+
+        CommandLineParser parser = new BasicParser();
+        CommandLine cmd = parser.parse(OPTIONS, args);
+
+        File f = new File(cmd.getOptionValue('f'));
 
         StringBuilder sb = FileLineIterator.asStringBuilder(f);
 
