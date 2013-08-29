@@ -4,7 +4,7 @@ import com.luxoft.sas.bug.metric.Metrics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.regex.Matcher;
+import java.util.Iterator;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,40 +20,26 @@ public class AppRG {
 
         StringBuilder sb = FileLineIterator.asStringBuilder(f);
 
-        Matcher startMatcher = UserWritenCodePart.getMatcher(sb, UserWritenCodePart.POSITION.START);
-
-        Matcher endMatcher = UserWritenCodePart.getMatcher(sb, UserWritenCodePart.POSITION.END);
+        Iterator<UserWritenCodePart> codeParts = UserWritenCodePart.getIterator(sb);
 
         CharSequence a = null;
-        while (startMatcher.find()) {
-            int startIndex = startMatcher.start();
-            System.out.print(startIndex);
-            boolean endFound = endMatcher.find(startIndex); //search from start index
-            if (endFound) {
-                int endIndex = endMatcher.end();
+        while (codeParts.hasNext()) {
+            CodePart uwc = codeParts.next();
 
-                UserWritenCodePart uwc = new UserWritenCodePart(sb.substring(startIndex, endIndex));
-
-                Metrics[] metrics = new Metrics[] {
-                        Metrics.PREPROCESS,
-                        Metrics.POSTPROCESS,
-                        Metrics.GLOBAL,
-                        Metrics.ERRORCHECK
-                };
-                for (Metrics element : metrics) {
-                    boolean applicable = element.metric().applicable(uwc);
-                    System.out.print(" -> " + element.name() + "=" + applicable);
-                }
-
-                System.out.print(" -> " + endIndex);
-
-                a =uwc.getCodeContent();
-            } else {
-                throw new IllegalStateException("End statement not found!");
+            Metrics[] metrics = new Metrics[] {
+                    Metrics.PREPROCESS,
+                    Metrics.POSTPROCESS,
+                    Metrics.GLOBAL,
+                    Metrics.ERRORCHECK
+            };
+            for (Metrics element : metrics) {
+                boolean applicable = element.metric().applicable(uwc);
+                System.out.print(" -> " + element.name() + "=" + applicable);
             }
+
+            a = uwc.getCodeContent();
+
             System.out.println();
-
-
         }
 
         //System.out.println(a);
