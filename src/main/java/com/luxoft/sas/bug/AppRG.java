@@ -1,5 +1,7 @@
 package com.luxoft.sas.bug;
 
+import com.luxoft.sas.bug.codepart.CodePart;
+import com.luxoft.sas.bug.codepart.UserWritenCodePart;
 import com.luxoft.sas.bug.metric.Metrics;
 
 import java.io.File;
@@ -20,11 +22,12 @@ public class AppRG {
 
         StringBuilder sb = FileLineIterator.asStringBuilder(f);
 
-        Iterator<UserWritenCodePart> codeParts = UserWritenCodePart.getIterator(sb);
+        Iterator<? extends CodePart> codeParts = UserWritenCodePart.FACTORY.getIterator(sb);
 
         CharSequence a = null;
         while (codeParts.hasNext()) {
             CodePart uwc = codeParts.next();
+            System.out.print(uwc);
 
             Metrics[] metrics = new Metrics[] {
                     Metrics.PREPROCESS,
@@ -34,7 +37,7 @@ public class AppRG {
             };
             for (Metrics element : metrics) {
                 boolean applicable = element.metric().applicable(uwc);
-                System.out.print(" -> " + element.name() + "=" + applicable);
+                System.out.print(" -> " + element.name() + "=" + applicable + " ");
             }
 
             a = uwc.getCodeContent();
