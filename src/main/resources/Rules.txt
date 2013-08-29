@@ -1,0 +1,13 @@
+По пункту 1 несколько типовых проблем:
+
+ 1.  Проверка "ручного"  кода (наличие в коде фраз User Written)
+   1.1 наличие в коде фраз Pre-Process, Post-Process в  User Written
+   1.2 после каждого  run; или quit;  в  User Written  должны присутствовать  %error_check
+   1.3 наличие в User Written  дат в любых SAS форматах  (за исключением комментариев(комментарий * - однострочный,  /* */ - многострочный)    )
+   1.4 наличие в коде макроса %Global  в  User Written
+   1.5 наличие в  User Written в рамках одной  конструкции proc SQL;       quit;   более 5 джойнов
+   1.6 отсутствие в рамках  User Written  фраз   &_INPUT1,  &_OUTPUT1
+
+2. общие
+  2.1 наличие в код  фраз  'user ',  'user=', 'pw ', 'pw=',  'libname',  'infile'
+  2.2 отсуствие в коде фраз %transform_job_start,    %transform_job_finish
