@@ -25,13 +25,17 @@ public class AppRG {
     public static void main(String[] args) throws FileNotFoundException, ParseException {
         // check parameters
         if (args.length == 0) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp( AppRG.class.getSimpleName(), OPTIONS );
+            dumpHelp();
             return;
         }
 
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(OPTIONS, args);
+
+        if(!cmd.hasOption('f')) {
+            dumpHelp();
+            return;
+        }
 
         File f = new File(cmd.getOptionValue('f'));
 
@@ -63,5 +67,11 @@ public class AppRG {
 
         //System.out.println(a);
 
+    }
+
+    private static void dumpHelp() {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp( AppRG.class.getSimpleName(), OPTIONS );
+        return;
     }
 }
