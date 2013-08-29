@@ -1,27 +1,37 @@
 package com.luxoft.sas.bug;
 
 import com.luxoft.sas.bug.metric.Metrics;
+import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
 
-/**
- * Created with IntelliJ IDEA.
- * User: ikonovalov
- * Date: 27.08.13
- * Time: 16:33
- * To change this template use File | Settings | File Templates.
- */
+
 public class AppRG {
 
-    public static void main(String[] args) throws FileNotFoundException {
-        File f = new File(args[0]);
+    private static final Options OPTIONS = new Options();
+    static {
+        OPTIONS.addOption("f", true, "SAS code file");
+    }
+
+    public static void main(String[] args) throws FileNotFoundException, ParseException {
+        // check parameters
+        if (args.length == 0) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp( AppRG.class.getSimpleName(), OPTIONS );
+            return;
+        }
+
+        CommandLineParser parser = new BasicParser();
+        CommandLine cmd = parser.parse(OPTIONS, args);
+
+        File f = new File(cmd.getOptionValue('f'));
 
         StringBuilder sb = FileLineIterator.asStringBuilder(f);
 
+        // start and end UserWriten writer
         Matcher startMatcher = UserWritenCodePart.getMatcher(sb, UserWritenCodePart.POSITION.START);
-
         Matcher endMatcher = UserWritenCodePart.getMatcher(sb, UserWritenCodePart.POSITION.END);
 
         CharSequence a = null;
@@ -34,7 +44,7 @@ public class AppRG {
 
                 UserWritenCodePart uwc = new UserWritenCodePart(sb.substring(startIndex, endIndex));
 
-                Metrics[] metrics = new Metrics[] {
+                Metrics[] metrics = new Metrics[]{
                         Metrics.PREPROCESS,
                         Metrics.POSTPROCESS,
                         Metrics.GLOBAL,
@@ -47,7 +57,7 @@ public class AppRG {
 
                 System.out.print(" -> " + endIndex);
 
-                a =uwc.getCodeContent();
+                a = uwc.getCodeContent();
             } else {
                 throw new IllegalStateException("End statement not found!");
             }
