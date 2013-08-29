@@ -1,6 +1,6 @@
 package com.luxoft.sas.bug;
 
-import java.util.regex.Matcher;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 public class UserWritenCodePart implements CodePart {
@@ -9,24 +9,17 @@ public class UserWritenCodePart implements CodePart {
 
     private int[] indexs = new int[]{0,0};
 
-    /**
-     * We assume that CodePart start with  (Transform:\s+User Written)
-     * and end with (End of User Written Code)
-     */
-    public enum POSITION {
-        START {
-            Pattern getPattern() {
-                return  Pattern.compile("(.+Transform:\\s+User Written(.*))");
-            }
-        },
-        END {
-           Pattern getPattern() {
-               return Pattern.compile("(.+End of User Written Code.+)");
-           }
-        };
+    private static final Pattern START_PATTERN = Pattern.compile("(.+Transform:\\s+User Written(.*))");
+    private static final Pattern END_PATTERN =  Pattern.compile("(.+End of User Written Code.+)");
 
-        abstract Pattern getPattern();
-    }
+   public static Iterator<UserWritenCodePart> getIterator(CharSequence code) {
+     return new RegExpIterator<UserWritenCodePart>(code, START_PATTERN, END_PATTERN) {
+       @Override
+       protected UserWritenCodePart asElement(CharSequence codePart) {
+         return new UserWritenCodePart(codePart);
+       }
+     };
+   }
 
     public UserWritenCodePart() {
         super();
@@ -39,10 +32,6 @@ public class UserWritenCodePart implements CodePart {
             throw new IllegalArgumentException("Indexs can have only 2 values: start index and stop index");
         }
         this.indexs = indexs;
-    }
-
-    public static Matcher getMatcher(CharSequence charSequence, POSITION position) {
-        return position.getPattern().matcher(charSequence);
     }
 
     public CharSequence getCodeContent() {
