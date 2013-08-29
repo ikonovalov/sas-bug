@@ -18,7 +18,7 @@ public class AppRG {
 
     private static final Options OPTIONS = new Options();
     static {
-        OPTIONS.addOption("f", true, "SAS code file");
+        OPTIONS.addOption("f", "file", true, "SAS code file");
     }
 
     public static void main(String[] args) throws FileNotFoundException, ParseException {
