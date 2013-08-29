@@ -8,7 +8,8 @@
     <packaging>jar</packaging>
 
     <name>sas-bug</name>
-    <url>http://maven.apache.org</url>
+    <url>https://github.com/ikonovalov/sas-bug</url>
+    <description>This little program just search predefined pattern in the SAS code</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
