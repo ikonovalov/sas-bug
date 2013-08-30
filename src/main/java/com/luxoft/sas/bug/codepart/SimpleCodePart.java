@@ -38,6 +38,6 @@ public class SimpleCodePart implements CodePart {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[" + start + "," + end + "]";
+        return getClass().getSimpleName() + "[s" + start + ",e" + end + "]";
     }
 }
