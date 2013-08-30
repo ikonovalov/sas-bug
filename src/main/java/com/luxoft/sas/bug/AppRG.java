@@ -28,6 +28,9 @@ public class AppRG {
         OPTIONS.addOption("M", "allmetrics", false, "Apply all available metrics");
     }
 
+
+    private static final int OUTPUT_MAX_WIDTH = 120;
+
     public static void main(String[] args) throws FileNotFoundException, ParseException {
         CommandLine cmd = POSIX_PARSER.parse(OPTIONS, args);
 
@@ -57,6 +60,7 @@ public class AppRG {
         }
 
         // let's grab SAS code
+        int totalCodeParts = 0;
         while (codeParts.hasNext()) {
             CodePart uwc = codeParts.next();
             System.out.print("* " + uwc);
@@ -66,14 +70,16 @@ public class AppRG {
                 boolean applicable = element.metric().applicable(uwc);
                 System.out.print(element.name() + "=" + applicable + " ");
             }
-
+            totalCodeParts++;
             System.out.println();
         }
+        System.out.println("Total code part handled: " + totalCodeParts);
 
     }
 
     private static void dumpHelp() {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( AppRG.class.getSimpleName(), OPTIONS );
+        formatter.setWidth(OUTPUT_MAX_WIDTH);
+        formatter.printHelp(AppRG.class.getSimpleName(), OPTIONS);
     }
 }
