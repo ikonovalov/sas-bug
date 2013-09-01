@@ -22,10 +22,16 @@ public class AppRG {
 
     private static final Options OPTIONS = new Options();
 
+    public static final String FILE_SHORT = "f";
+
+    public static final String METRIC_SINGLE_SHORT = "m";
+
+    public static final String METRIC_ALL_SHORT = "M";
+
     static {
-        OPTIONS.addOption("f", "file", true, "SAS code file");
-        OPTIONS.addOption("m", "metric", true, "Specific metric: " + Arrays.asList(Metrics.values()));
-        OPTIONS.addOption("M", "allmetrics", false, "Apply all available metrics");
+        OPTIONS.addOption(FILE_SHORT, "file", true, "SAS code file");
+        OPTIONS.addOption(METRIC_SINGLE_SHORT, "metric", true, "Specific metric: " + Arrays.asList(Metrics.values()));
+        OPTIONS.addOption(METRIC_ALL_SHORT, "allmetrics", false, "Apply all available metrics");
     }
 
 
@@ -43,8 +49,6 @@ public class AppRG {
 
         final StringBuilder sb = FileLineIterator.asStringBuilder(f);
 
-        final Iterator<? extends CodePart> codeParts = UserWritenCodePart.FACTORY.getIterator(sb);
-
         // prepare required metrics
         Metrics[] metrics = null;
         if (cmd.hasOption('M')) {
@@ -59,6 +63,8 @@ public class AppRG {
             metrics = new Metrics[]{Metrics.valueOf(cmd.getOptionValue('m'))};
         }
 
+        final Iterator<UserWritenCodePart> codeParts = UserWritenCodePart.FACTORY.getIterator(sb);
+
         // let's grab SAS code
         int totalCodeParts = 0;
         while (codeParts.hasNext()) {
@@ -66,12 +72,12 @@ public class AppRG {
             System.out.print("* " + uwc);
 
             for (Metrics element : metrics) {
-                System.out.print(" -> ");
-                boolean applicable = element.metric().applicable(uwc);
+                System.out.print("\n\t\t");
+                boolean applicable = element.applicable(uwc);
                 System.out.print(element.name() + "=" + applicable + " ");
             }
             totalCodeParts++;
-            System.out.println();
+            System.out.println("\n");
         }
         System.out.println("Total code part handled: " + totalCodeParts);
 
