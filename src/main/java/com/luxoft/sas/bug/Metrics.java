@@ -45,6 +45,10 @@ public enum Metrics {
      */
     private Metric metric;
 
+    /**
+     * Should return new fresh and "thread ready" metric
+     * @return
+     */
     protected abstract Metric createMetric();
 
     /**
@@ -60,7 +64,7 @@ public enum Metrics {
     }
 
     /**
-     * Shorthande for Metrics.createMetric().applicable(com.luxoft.sas.bug.codepart.CodePart codePart);
+     * Shorthand for Metrics.createMetric().applicable(com.luxoft.sas.bug.codepart.CodePart codePart);
      * @param codePart checking by this metric
      * @return true - Metric found, false - Metric not encountered.
      */

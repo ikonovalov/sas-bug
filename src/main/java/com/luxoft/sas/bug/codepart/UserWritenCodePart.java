@@ -22,10 +22,6 @@ public class UserWritenCodePart extends SimpleCodePart {
        }
     };
 
-    public UserWritenCodePart(CharSequence codeContent) {
-        super(codeContent);
-    }
-
     public UserWritenCodePart(CharSequence codeContent, int start, int end) {
         super(codeContent, start, end);
     }

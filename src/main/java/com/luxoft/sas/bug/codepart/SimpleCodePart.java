@@ -11,16 +11,11 @@ public class SimpleCodePart implements CodePart {
 
     private CharSequence codeContent = null;
 
-    private int start;
-    private int end;
-
-    public SimpleCodePart(CharSequence codeContent) {
-        this.codeContent = codeContent;
-        this.start = 0;
-        this.end = codeContent.length() - 1;
-    }
+    private int start; /* code's start position in global (whole) code */
+    private int end; /* end code part position in the whole code */
 
     public SimpleCodePart(CharSequence codeContent, int start, int end) {
+        super();
         this.codeContent = codeContent;
         this.start = start;
         this.end = end;

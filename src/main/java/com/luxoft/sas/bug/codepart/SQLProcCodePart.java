@@ -22,10 +22,6 @@ public class SQLProcCodePart extends SimpleCodePart {
        }
     };
 
-    public SQLProcCodePart(CharSequence codeContent) {
-        super(codeContent);
-    }
-
     public SQLProcCodePart(CharSequence codeContent, int start, int end) {
         super(codeContent, start, end);
     }

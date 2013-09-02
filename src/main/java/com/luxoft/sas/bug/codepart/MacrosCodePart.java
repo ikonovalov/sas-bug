@@ -29,10 +29,6 @@ public class MacrosCodePart extends SimpleCodePart {
         }
     };
 
-    public MacrosCodePart(CharSequence codeContent) {
-        super(codeContent);
-    }
-
     public MacrosCodePart(CharSequence codeContent, int start, int end) {
         super(codeContent, start, end);
     }
