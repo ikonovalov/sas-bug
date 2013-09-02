@@ -5,7 +5,7 @@ import com.luxoft.sas.bug.codepart.MacrosCodePart;
 import com.luxoft.sas.bug.codepart.SQLProcCodePart;
 import com.luxoft.sas.bug.metric.AbstractRegExpMetric;
 import com.luxoft.sas.bug.metric.Metric;
-import com.luxoft.sas.bug.metric.SubBlockMetric;
+import com.luxoft.sas.bug.metric.NestedCodePartMetric;
 
 public enum Metrics {
     PREPROCESS {
@@ -24,7 +24,7 @@ public enum Metrics {
     GLOBAL {
         @Override
         public Metric createMetric() {
-            return new SubBlockMetric(MacrosCodePart.FACTORY, new AbstractRegExpMetric("%global"));
+            return new NestedCodePartMetric(MacrosCodePart.FACTORY, new AbstractRegExpMetric("%global"));
         }
     },
     ERRORCHECK {
@@ -36,7 +36,7 @@ public enum Metrics {
     SQLPROC_JOINS {
         @Override
         public Metric createMetric() {
-            return new SubBlockMetric(SQLProcCodePart.FACTORY, new AbstractRegExpMetric("(?i)(join\\W.*){5,}"));
+            return new NestedCodePartMetric(SQLProcCodePart.FACTORY, new AbstractRegExpMetric("(?i)(join\\W.*){5,}"));
         }
     };
 

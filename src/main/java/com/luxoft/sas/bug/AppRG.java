@@ -50,18 +50,7 @@ public class AppRG {
         final StringBuilder sb = FileLineIterator.asStringBuilder(f);
 
         // prepare required metrics
-        Metrics[] metrics = null;
-        if (cmd.hasOption('M')) {
-            metrics = new Metrics[]{
-                    Metrics.PREPROCESS,
-                    Metrics.POSTPROCESS,
-                    Metrics.GLOBAL,
-                    Metrics.ERRORCHECK,
-                    Metrics.SQLPROC_JOINS
-            };
-        } else if (cmd.hasOption('m')){
-            metrics = new Metrics[]{Metrics.valueOf(cmd.getOptionValue('m'))};
-        }
+        final Metrics[] metrics = createMetrics(cmd);
 
         final Iterator<UserWritenCodePart> codeParts = UserWritenCodePart.FACTORY.getIterator(sb);
 
@@ -81,6 +70,22 @@ public class AppRG {
         }
         System.out.println("Total code part handled: " + totalCodeParts);
 
+    }
+
+    private static Metrics[] createMetrics(CommandLine cmd) {
+        Metrics[] metrics = null;
+        if (cmd.hasOption('M')) {
+            metrics = new Metrics[]{
+                    Metrics.PREPROCESS,
+                    Metrics.POSTPROCESS,
+                    Metrics.GLOBAL,
+                    Metrics.ERRORCHECK,
+                    Metrics.SQLPROC_JOINS
+            };
+        } else if (cmd.hasOption('m')){
+            metrics = new Metrics[]{Metrics.valueOf(cmd.getOptionValue('m'))};
+        }
+        return metrics;
     }
 
     private static void dumpHelp() {
