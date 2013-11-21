@@ -13,9 +13,14 @@ public class AbstractRegExpMetric implements Metric {
         this.pattern = Pattern.compile(pattern);
     }
 
-    public boolean applicable(final CodePart part) {
+    public int applicable(final CodePart part) {
         Matcher matcher = pattern.matcher(part.getCodeContent());
-        return matcher.find();
+        if (matcher.find()) {
+            //System.out.println(part.getCodeContent().subSequence(matcher.start(), matcher.end()));
+            return matcher.start();
+        } else {
+            return -1;
+        }
     }
 
     @Override

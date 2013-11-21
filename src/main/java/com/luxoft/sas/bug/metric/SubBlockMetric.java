@@ -15,14 +15,17 @@ public class SubBlockMetric implements Metric {
         this.codePartFactory = codePartFactory;
     }
 
-    public boolean applicable(final CodePart part) {
-        Iterator<? extends CodePart> it = codePartFactory.getIterator(part.getCodeContent());
+    public int applicable(final CodePart part) {
+        Iterator<? extends CodePart> it = codePartFactory.getIterator(part);
         while (it.hasNext()) {
             CodePart codeSubPart = it.next();
-            System.out.print(codeSubPart);
-            if(metric.applicable(codeSubPart)) return true;
+            //System.out.print(codeSubPart);
+            int startChar = metric.applicable(codeSubPart);
+            if(startChar >= 0) {
+                return codeSubPart.getStart() - part.getStart() + startChar;
+            }
         }
-        return false;
+        return -1;
     }
 
     @Override

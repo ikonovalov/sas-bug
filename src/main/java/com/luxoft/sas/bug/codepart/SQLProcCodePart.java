@@ -12,10 +12,10 @@ public class SQLProcCodePart extends SimpleCodePart {
     private static final Pattern END_PATTERN =  Pattern.compile("quit;");
 
     public static final CodePartIteratorFactory<SQLProcCodePart> FACTORY = new CodePartIteratorFactory<SQLProcCodePart>() {
-        public Iterator<SQLProcCodePart> getIterator(CharSequence code) {
+        public Iterator<SQLProcCodePart> getIterator(CodePart code) {
          return new RegExpIterator<SQLProcCodePart>(code, START_PATTERN, END_PATTERN) {
            @Override
-           protected SQLProcCodePart asElement(CharSequence codePart, int start, int end) {
+           protected SQLProcCodePart asElement(CodePart codePart, int start, int end) {
              return new SQLProcCodePart(codePart, start, end);
            }
          };
@@ -26,8 +26,8 @@ public class SQLProcCodePart extends SimpleCodePart {
         super(codeContent);
     }
 
-    public SQLProcCodePart(CharSequence codeContent, int start, int end) {
-        super(codeContent, start, end);
+    public SQLProcCodePart(CodePart codePart, int start, int end) {
+        super(codePart, start, end);
     }
 
 }

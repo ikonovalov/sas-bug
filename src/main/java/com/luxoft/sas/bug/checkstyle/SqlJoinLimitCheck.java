@@ -19,8 +19,9 @@ public class SqlJoinLimitCheck extends UserWrittenWalker {
     public void visitToken(SimpleCodePart cp) {
         // modified Metrics.SQLPROC_JOINS
         SubBlockMetric metric = new SubBlockMetric(SQLProcCodePart.FACTORY, new AbstractRegExpMetric("(?i)(join\\W.*){" + (max + 1) + ",}"));
-        if (!metric.applicable(cp)) {
-            log(cp.getStart(), "sql.join.limit", max);
+        int startChar = metric.applicable(cp);
+        if (startChar >= 0) {
+            log(cp.getStartLine() + cp.getLinesOffset(startChar), "sql.join.limit", max);
         }
     }
 }

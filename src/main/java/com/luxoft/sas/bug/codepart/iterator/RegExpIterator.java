@@ -1,5 +1,8 @@
 package com.luxoft.sas.bug.codepart.iterator;
 
+import com.luxoft.sas.bug.codepart.CodePart;
+import com.luxoft.sas.bug.codepart.SimpleCodePart;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
@@ -10,17 +13,26 @@ import java.util.regex.Pattern;
  */
 public abstract class RegExpIterator<T> implements Iterator<T> {
 
-    private final CharSequence code;
+    private final CodePart code;
 
     private Matcher startMatcher;
     private Matcher endMatcher;
 
     private boolean hasNext;
 
-    public RegExpIterator(CharSequence code, Pattern startPattern, Pattern endPattern) {
+    public RegExpIterator(CharSequence charSequence, Pattern startPattern, Pattern endPattern) {
+        this.code = new SimpleCodePart(charSequence);
+        CharSequence codeContent = code.getCodeContent();
+        startMatcher = startPattern.matcher(codeContent);
+        endMatcher = endPattern.matcher(codeContent);
+        hasNext = startMatcher.find();
+    }
+
+    public RegExpIterator(CodePart code, Pattern startPattern, Pattern endPattern) {
         this.code = code;
-        startMatcher = startPattern.matcher(code);
-        endMatcher = endPattern.matcher(code);
+        CharSequence codeContent = code.getCodeContent();
+        startMatcher = startPattern.matcher(codeContent);
+        endMatcher = endPattern.matcher(codeContent);
         hasNext = startMatcher.find();
     }
 
@@ -53,6 +65,6 @@ public abstract class RegExpIterator<T> implements Iterator<T> {
         }
     }
 
-    protected abstract T asElement(CharSequence code, int start, int end);
+    protected abstract T asElement(CodePart code, int start, int end);
 
 }

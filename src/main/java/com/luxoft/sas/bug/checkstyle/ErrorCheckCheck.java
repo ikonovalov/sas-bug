@@ -11,8 +11,9 @@ public class ErrorCheckCheck extends UserWrittenWalker {
     private static final Metrics CHECK = Metrics.ERRORCHECK;
 
     public void visitToken(SimpleCodePart cp) {
-        if (!CHECK.metric().applicable(cp)) {
-            log(cp.getStart(), CHECK.name());
+        int startChar = CHECK.metric().applicable(cp);
+        if (startChar >= 0) {
+            log(cp.getStartLine() + cp.getLinesOffset(startChar), CHECK.name());
         }
     }
 }

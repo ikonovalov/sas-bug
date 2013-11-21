@@ -1,7 +1,8 @@
 package com.luxoft.sas.bug;
 
 import com.luxoft.sas.bug.codepart.CodePart;
-import com.luxoft.sas.bug.codepart.UserWritenCodePart;
+import com.luxoft.sas.bug.codepart.SimpleCodePart;
+import com.luxoft.sas.bug.codepart.UserWrittenCodePart;
 import org.apache.commons.cli.*;
 
 import java.io.File;
@@ -41,7 +42,7 @@ public class AppRG {
 
         StringBuilder sb = FileLineIterator.asStringBuilder(f);
 
-        Iterator<? extends CodePart> codeParts = UserWritenCodePart.FACTORY.getIterator(sb);
+        Iterator<? extends CodePart> codeParts = UserWrittenCodePart.FACTORY.getIterator(new SimpleCodePart(sb));
 
         CharSequence a = null;
         while (codeParts.hasNext()) {
@@ -56,8 +57,8 @@ public class AppRG {
                     Metrics.SQLPROC_JOINS
             };
             for (Metrics element : metrics) {
-                boolean applicable = element.metric().applicable(uwc);
-                System.out.print(" -> " + element.name() + "=" + applicable + " ");
+                int applicable = element.metric().applicable(uwc);
+                System.out.print(" -> " + element.name() + "=" + (applicable >= 0) + " ");
             }
 
             a = uwc.getCodeContent();

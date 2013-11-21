@@ -4,6 +4,12 @@ import com.luxoft.sas.bug.codepart.CodePart;
 
 public interface Metric {
 
-    public boolean applicable(CodePart part);
+    /**
+     * Найти метрику.
+     *
+     * @param part
+     * @return первый символ найденной метрики или -1 если метрика не найдена
+     */
+    public int applicable(CodePart part);
 
 }

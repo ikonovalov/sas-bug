@@ -2,7 +2,7 @@ package com.luxoft.sas.bug.checkstyle;
 
 import com.luxoft.sas.bug.FileLineIterator;
 import com.luxoft.sas.bug.codepart.SimpleCodePart;
-import com.luxoft.sas.bug.codepart.UserWritenCodePart;
+import com.luxoft.sas.bug.codepart.UserWrittenCodePart;
 import com.puppycrawl.tools.checkstyle.api.AbstractFileSetCheck;
 
 import java.io.File;
@@ -24,7 +24,7 @@ public abstract class UserWrittenWalker extends AbstractFileSetCheck {
             throw new IllegalArgumentException("can't read file", e);
         }
 
-        Iterator<UserWritenCodePart> codeParts = UserWritenCodePart.FACTORY.getIterator(sb);
+        Iterator<UserWrittenCodePart> codeParts = UserWrittenCodePart.FACTORY.getIterator(new SimpleCodePart(sb));
 
         while (codeParts.hasNext()) {
             visitToken(codeParts.next());

@@ -13,6 +13,6 @@ import java.util.Iterator;
  */
 public interface CodePartIteratorFactory<T extends CodePart> {
 
-    Iterator<T> getIterator(CharSequence code);
+    Iterator<T> getIterator(CodePart code);
 
 }
