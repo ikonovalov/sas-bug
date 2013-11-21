@@ -35,7 +35,7 @@ public enum Metrics {
     SQLPROC_JOINS {
         @Override
         public Metric createMetric() {
-            return new SubBlockMetric(SQLProcCodePart.FACTORY, new AbstractRegExpMetric("(?i)(join\\W.*){5,}"));
+            return new SubBlockMetric(SQLProcCodePart.FACTORY, new AbstractRegExpMetric("(?i)(join\\W.*){6,}"));
         }
     },;
 

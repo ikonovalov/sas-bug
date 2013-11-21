@@ -40,4 +40,8 @@ public class SimpleCodePart implements CodePart {
     public String toString() {
         return getClass().getSimpleName() + "[" + start + "," + end + "]";
     }
+
+    public int getStart() {
+        return start;
+    }
 }
