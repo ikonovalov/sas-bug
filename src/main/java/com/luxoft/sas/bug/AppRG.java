@@ -7,6 +7,7 @@ import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -18,61 +19,79 @@ import java.util.Iterator;
  */
 public class AppRG {
 
+    private static final  CommandLineParser POSIX_PARSER = new PosixParser();
+
     private static final Options OPTIONS = new Options();
+
+    public static final String FILE_SHORT = "f";
+
+    public static final String METRIC_SINGLE_SHORT = "m";
+
+    public static final String METRIC_ALL_SHORT = "M";
+
     static {
-        OPTIONS.addOption("f", "file", true, "SAS code file");
+        OPTIONS.addOption(FILE_SHORT, "file", true, "SAS code file");
+        OPTIONS.addOption(METRIC_SINGLE_SHORT, "metric", true, "Specific metric: " + Arrays.asList(Metrics.values()));
+        OPTIONS.addOption(METRIC_ALL_SHORT, "allmetrics", false, "Apply all available metrics");
     }
 
+
+    private static final int OUTPUT_MAX_WIDTH = 120;
+
     public static void main(String[] args) throws FileNotFoundException, ParseException {
-        // check parameters
-        if (args.length == 0) {
+        CommandLine cmd = POSIX_PARSER.parse(OPTIONS, args);
+
+        if (!cmd.hasOption('f') || !(cmd.hasOption('m') || cmd.hasOption('M'))) {
             dumpHelp();
             return;
         }
 
-        CommandLineParser parser = new BasicParser();
-        CommandLine cmd = parser.parse(OPTIONS, args);
+        final File f = new File(cmd.getOptionValue('f'));
 
-        if (!cmd.hasOption('f')) {
-            dumpHelp();
-            return;
-        }
+        final StringBuilder sb = FileLineIterator.asStringBuilder(f);
 
-        File f = new File(cmd.getOptionValue('f'));
+        // prepare required metrics
+        final Metrics[] metrics = createMetrics(cmd);
 
-        StringBuilder sb = FileLineIterator.asStringBuilder(f);
+        final Iterator<UserWrittenCodePart> codeParts = UserWrittenCodePart.FACTORY.getIterator(new SimpleCodePart(sb));
 
-        Iterator<? extends CodePart> codeParts = UserWrittenCodePart.FACTORY.getIterator(new SimpleCodePart(sb));
-
-        CharSequence a = null;
+        // let's grab SAS code
+        int totalCodeParts = 0;
         while (codeParts.hasNext()) {
             CodePart uwc = codeParts.next();
-            System.out.print(uwc);
+            System.out.print("* " + uwc);
 
-            Metrics[] metrics = new Metrics[] {
+            for (Metrics element : metrics) {
+                System.out.print("\n\t\t");
+                int applicable = element.applicable(uwc);
+                System.out.print(element.name() + "=" + (applicable >= 0) + " ");
+            }
+            totalCodeParts++;
+            System.out.println("\n");
+        }
+        System.out.println("Total code part handled: " + totalCodeParts);
+
+    }
+
+    private static Metrics[] createMetrics(CommandLine cmd) {
+        Metrics[] metrics = null;
+        if (cmd.hasOption('M')) {
+            metrics = new Metrics[]{
                     Metrics.PREPROCESS,
                     Metrics.POSTPROCESS,
                     Metrics.GLOBAL,
                     Metrics.ERRORCHECK,
                     Metrics.SQLPROC_JOINS
             };
-            for (Metrics element : metrics) {
-                int applicable = element.metric().applicable(uwc);
-                System.out.print(" -> " + element.name() + "=" + (applicable >= 0) + " ");
-            }
-
-            a = uwc.getCodeContent();
-
-            System.out.println();
+        } else if (cmd.hasOption('m')){
+            metrics = new Metrics[]{Metrics.valueOf(cmd.getOptionValue('m'))};
         }
-
-        //System.out.println(a);
-
+        return metrics;
     }
 
     private static void dumpHelp() {
         HelpFormatter formatter = new HelpFormatter();
+        formatter.setWidth(OUTPUT_MAX_WIDTH);
         formatter.printHelp(AppRG.class.getSimpleName(), OPTIONS);
-        return;
     }
 }

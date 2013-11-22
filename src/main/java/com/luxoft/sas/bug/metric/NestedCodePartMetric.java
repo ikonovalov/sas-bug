@@ -5,12 +5,21 @@ import com.luxoft.sas.bug.codepart.CodePart;
 
 import java.util.Iterator;
 
-public class SubBlockMetric implements Metric {
+/**
+ * Метрика позволяющая из указанной CodePart вычленять дополнительнче секции кода и применять метрику именно к ним.
+ */
+public class NestedCodePartMetric implements Metric {
 
     private final Metric metric;
+
     private final CodePartIteratorFactory<? extends CodePart> codePartFactory;
 
-    public SubBlockMetric(CodePartIteratorFactory<? extends CodePart> codePartFactory, Metric metric) {
+    /**
+     *
+     * @param codePartFactory фабрика итератора влеженного кода.
+     * @param metric - метрика, применяемая к секциям влеженого кода.
+     */
+    public NestedCodePartMetric(CodePartIteratorFactory<? extends CodePart> codePartFactory, Metric metric) {
         this.metric = metric;
         this.codePartFactory = codePartFactory;
     }
