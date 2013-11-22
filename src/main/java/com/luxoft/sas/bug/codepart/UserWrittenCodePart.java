@@ -6,6 +6,9 @@ import com.luxoft.sas.bug.codepart.iterator.RegExpIterator;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+/**
+ * Блок кода Step: User Written.
+ */
 public class UserWrittenCodePart extends SimpleCodePart {
 
     private static final Pattern START_PATTERN = Pattern.compile("(?s)Step:\\s+User Written");

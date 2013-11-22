@@ -33,7 +33,7 @@ public class AppRG {
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(OPTIONS, args);
 
-        if(!cmd.hasOption('f')) {
+        if (!cmd.hasOption('f')) {
             dumpHelp();
             return;
         }
@@ -72,7 +72,7 @@ public class AppRG {
 
     private static void dumpHelp() {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( AppRG.class.getSimpleName(), OPTIONS );
+        formatter.printHelp(AppRG.class.getSimpleName(), OPTIONS);
         return;
     }
 }

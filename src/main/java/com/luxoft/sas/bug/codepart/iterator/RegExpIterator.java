@@ -9,7 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Итератор блоков кода.
+ * Итератор блоков кода по начальному и конечному regex выражениям.
+ *
+ * @param <T> тип блоков
  */
 public abstract class RegExpIterator<T> implements Iterator<T> {
 
@@ -20,6 +22,11 @@ public abstract class RegExpIterator<T> implements Iterator<T> {
 
     private boolean hasNext;
 
+    /**
+     * @param charSequence код
+     * @param startPattern шаблон начала блока кода
+     * @param endPattern шаблон конца блока кода
+     */
     public RegExpIterator(CharSequence charSequence, Pattern startPattern, Pattern endPattern) {
         this.code = new SimpleCodePart(charSequence);
         CharSequence codeContent = code.getCodeContent();
@@ -28,6 +35,11 @@ public abstract class RegExpIterator<T> implements Iterator<T> {
         hasNext = startMatcher.find();
     }
 
+    /**
+     * @param code код
+     * @param startPattern шаблон начала блока кода
+     * @param endPattern шаблон конца блока кода
+     */
     public RegExpIterator(CodePart code, Pattern startPattern, Pattern endPattern) {
         this.code = code;
         CharSequence codeContent = code.getCodeContent();
@@ -36,6 +48,9 @@ public abstract class RegExpIterator<T> implements Iterator<T> {
         hasNext = startMatcher.find();
     }
 
+    /**
+     * Поиск следующего блока.
+     */
     private void walkToNext() {
         if (!hasNext) throw new NoSuchElementException();
         int startIndex = startMatcher.start();

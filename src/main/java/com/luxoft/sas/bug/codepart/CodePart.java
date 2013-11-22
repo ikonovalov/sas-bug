@@ -1,12 +1,29 @@
 package com.luxoft.sas.bug.codepart;
 
+/**
+ * Блок кода.
+ */
 public interface CodePart {
 
-    public CharSequence getCodeContent();
+    /**
+     * @return блок кода
+     */
+    CharSequence getCodeContent();
 
-    public void setCodeContent(final CharSequence codeContent);
+    /**
+     * Заменить весь блок.
+     *
+     * @param codeContent новый код
+     */
+    void setCodeContent(final CharSequence codeContent);
 
-    public int getStart();
+    /**
+     * @return номер первого символа кода в общем тексте.
+     */
+    int getStart();
 
-    public int getEnd();
+    /**
+     * @return номер поседнего символа кода в общем тексте.
+     */
+    int getEnd();
 }

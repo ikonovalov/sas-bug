@@ -1,11 +1,7 @@
 package com.luxoft.sas.bug.codepart;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ttishin
- * Date: 29.08.13
- * Time: 15:56
- * To change this template use File | Settings | File Templates.
+ * Блок кода.
  */
 public class SimpleCodePart implements CodePart {
 
@@ -21,8 +17,12 @@ public class SimpleCodePart implements CodePart {
     }
 
     public SimpleCodePart(CharSequence codeContent, int start, int end) {
-        if (start < 0) throw new ArrayIndexOutOfBoundsException("start can't be < 0");
-        if (end > codeContent.length()) throw new ArrayIndexOutOfBoundsException("end can't be after end of codeContent");
+        if (start < 0) {
+            throw new ArrayIndexOutOfBoundsException("start can't be < 0");
+        }
+        if (end > codeContent.length()) {
+            throw new ArrayIndexOutOfBoundsException("end can't be after end of codeContent");
+        }
 
         this.codeContent = codeContent;
         this.start = start;
@@ -30,12 +30,19 @@ public class SimpleCodePart implements CodePart {
     }
 
     public SimpleCodePart(CodePart codePart, int start, int end) {
-        if (!(codePart instanceof SimpleCodePart)) throw new UnsupportedOperationException("Unsupported codePart class"); //TODO: implement
+        if (!(codePart instanceof SimpleCodePart)) {
+            throw new UnsupportedOperationException("Unsupported codePart class");
+            /* TODO: implement for any CodePart */
+        }
         SimpleCodePart source = ((SimpleCodePart)codePart);
         this.codeContent = source.codeContent;
 
-        if (start < -source.getStart()) throw new ArrayIndexOutOfBoundsException("start char out of original source codeContent");
-        if (end > codeContent.length() - source.getStart()) throw new ArrayIndexOutOfBoundsException("end can't be after end of source codeContent");
+        if (start < -source.getStart()) {
+            throw new ArrayIndexOutOfBoundsException("start char out of original source codeContent");
+        }
+        if (end > codeContent.length() - source.getStart()) {
+            throw new ArrayIndexOutOfBoundsException("end can't be after end of source codeContent");
+        }
 
         this.start = source.getStart() + start;
         this.end = source.getStart() + end;
@@ -67,14 +74,25 @@ public class SimpleCodePart implements CodePart {
         return getClass().getSimpleName() + "[" + start + "," + end + "]";
     }
 
+    /**
+     * @return номер первого символа кода в общем тексте.
+     */
+    @Override
     public int getStart() {
         return start;
     }
 
+    /**
+     * @return номер последнего символа кода в общем тексте.
+     */
+    @Override
     public int getEnd() {
         return end;
     }
 
+    /**
+     * @return номер первой строки кода в общем тексте.
+     */
     public int getStartLine() {
         int startLine = 1;
         for (int i = 0; i < start; i++) {
@@ -83,6 +101,11 @@ public class SimpleCodePart implements CodePart {
         return startLine;
     }
 
+    /**
+     * Получить смещение конкретного символа внутри кода.
+     *
+     * @return смещение (кол-во строк)
+     */
     public int getLinesOffset(int codePartCharNumber) {
         int linesCount = 0;
         for (int i = start; i < start + codePartCharNumber; i++) {

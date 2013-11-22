@@ -31,5 +31,10 @@ public abstract class UserWrittenWalker extends AbstractFileSetCheck {
         }
     }
 
+    /**
+     * Обработка одиночного User Written блока.
+     *
+     * @param cp User Written блок
+     */
     public abstract void visitToken(SimpleCodePart cp);
 }

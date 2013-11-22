@@ -7,11 +7,7 @@ import java.util.Iterator;
 import java.util.regex.Pattern;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ttishin
- * Date: 29.08.13
- * Time: 15:21
- * To change this template use File | Settings | File Templates.
+ * Блок кода macro.
  */
 public class MacrosCodePart extends SimpleCodePart {
 

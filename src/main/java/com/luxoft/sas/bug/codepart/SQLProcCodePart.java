@@ -6,6 +6,9 @@ import com.luxoft.sas.bug.codepart.iterator.RegExpIterator;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+/**
+ * Блок proc sql.
+ */
 public class SQLProcCodePart extends SimpleCodePart {
 
     private static final Pattern START_PATTERN = Pattern.compile("proc sql");
