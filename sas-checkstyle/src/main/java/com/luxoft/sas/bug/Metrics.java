@@ -8,32 +8,33 @@ import com.luxoft.sas.bug.metric.Metric;
 import com.luxoft.sas.bug.metric.NestedCodePartMetric;
 
 public enum Metrics {
-    PREPROCESS {
+    PREPROCESS("в коде User Written не хватает фразы Pre-Process") {
         @Override
         public Metric createMetric() {
             return new AbstractRegExpMetric("Pre-Process");
         }
     },
-    POSTPROCESS {
+    POSTPROCESS("в коде User Written не хватает фразы Post-Process") {
         @Override
         public Metric createMetric() {
             return new AbstractRegExpMetric("Post-Process");
         }
 
     },
-    GLOBAL {
+    GLOBAL("в коде User Written присутствует макрос %global") {
         @Override
         public Metric createMetric() {
             return new NestedCodePartMetric(MacrosCodePart.FACTORY, new AbstractRegExpMetric("%global"));
         }
     },
-    ERRORCHECK {
+    ERRORCHECK("не хватает %error_check после run; или quit;") {
         @Override
         public Metric createMetric() {
+            // todo: искать БЕЗ %error_check
             return new AbstractRegExpMetric("((quit;)|(run;))\\s*\\S+\\s*%error_check");
         }
     },
-    SQLPROC_JOINS {
+    SQLPROC_JOINS("наличие в User Written в рамках одной конструкции proc SQL; более 5 джойнов") {
         @Override
         public Metric createMetric() {
             return new NestedCodePartMetric(SQLProcCodePart.FACTORY, new AbstractRegExpMetric("(?i)(join\\W.*){6,}"));
@@ -46,10 +47,19 @@ public enum Metrics {
     private Metric metric;
 
     /**
+     *
+     */
+    private String description;
+
+    /**
      * Should return new fresh and "thread ready" metric
      * @return
      */
     protected abstract Metric createMetric();
+
+    public String description() {
+        return description;
+    }
 
     /**
      * @deprecated since 1.1
@@ -61,6 +71,10 @@ public enum Metrics {
             metric = createMetric();
         }
         return metric;
+    }
+
+    private Metrics(String description) {
+        this.description = description;
     }
 
     /**
