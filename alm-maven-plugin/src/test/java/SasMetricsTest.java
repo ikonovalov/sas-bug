@@ -5,10 +5,10 @@ import java.util.logging.*;
 public class SasMetricsTest {
 
     public static void main(String[] args) throws Exception {
-        Logger logger = Logger.getLogger(SasMetrics.class.getName());
+        Logger logger = Logger.getLogger("ru.luxoft");
         logger.setLevel(Level.ALL);
         ConsoleHandler handler = new ConsoleHandler();
-        handler.setLevel(Level.ALL);
+        handler.setLevel(Level.FINE);
         handler.setFormatter(new Formatter() {
             @Override
             public String format(LogRecord record) {
