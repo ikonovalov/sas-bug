@@ -1,9 +1,6 @@
 package ru.luxoft.maven.alm.checkstyle.server;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -11,6 +8,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,40 +51,73 @@ public class ALMServer implements Closeable {
         try {
             httpClient.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warning(e.getLocalizedMessage());
+        }
+    }
+
+    private String execute(HttpUriRequest request) {
+        CloseableHttpResponse response;
+        try {
+            response = httpClient.execute(request);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed call " + request.getMethod() + " request to " + request.getURI(), e);
+        }
+        try {
+            if (response.getStatusLine().getStatusCode() >= 400) {
+                try {
+                    log.severe(EntityUtils.toString(response.getEntity(), "UTF-8"));
+                } catch (IOException e) {
+                    log.warning(e.getLocalizedMessage());
+                }
+                throw new IllegalArgumentException(response.getStatusLine() + " (" + request.getMethod() + " to " + request.getURI() + ")");
+            }
+
+            String result;
+            try {
+                result = EntityUtils.toString(response.getEntity());
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed get result of " + request.getMethod() + " request to " + request.getURI(), e);
+            }
+
+            if (log.isLoggable(Level.FINEST)) {
+                log.finest(request.getMethod() + " " + request.getURI() + (result.length() > 0 ? "\n" + result.replace("\n","") : ""));
+            }
+
+            return result;
+
+        } finally {
+            try {
+                response.close();
+            } catch (IOException e) {
+                log.warning(e.getLocalizedMessage());
+            }
         }
     }
 
     public void login(String user, String password) {
         String serviceEndpoint = "http://" + server + "/qcbin/authentication-point/alm-authenticate";
+        HttpPost httppost = new HttpPost(serviceEndpoint);
+        StringEntity ent;
         try {
-            HttpPost httppost = new HttpPost(serviceEndpoint);
-            StringEntity ent = new StringEntity(
+            ent = new StringEntity(
                     "<alm-authentication>" +
                     "<user>" + user + "</user>" +
                     "<password>" + password + "</password>" +
                     "</alm-authentication>", "UTF-8");
-            httppost.setEntity(ent);
-            CloseableHttpResponse response = httpClient.execute(httppost);
-            response.close();
-            log.fine("login success");
-            this.user = user;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed POST " + serviceEndpoint, e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
+        httppost.setEntity(ent);
+        execute(httppost);
+        log.fine("login success");
+        this.user = user;
     }
 
     public void logout() {
         String serviceEndpoint = "http://" + server + "/qcbin/authentication-point/logout";
-        try {
-            HttpGet get = new HttpGet(serviceEndpoint);
-            CloseableHttpResponse response = httpClient.execute(get);
-            response.close();
-            log.fine("logout");
-            this.user = null;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed GET " + serviceEndpoint, e);
-        }
+        execute(new HttpGet(serviceEndpoint));
+        log.fine("logout");
+        this.user = null;
     }
 
     private String fullEntityUrl(String entityUrl) {
@@ -95,75 +126,49 @@ public class ALMServer implements Closeable {
 
     protected String post(String serviceUrl, String xml) {
         String serviceEndpoint = fullEntityUrl(serviceUrl);
-        try {
-            HttpPost httppost = new HttpPost(serviceEndpoint);
-            if (xml != null) {
-                StringEntity ent = new StringEntity(xml, "UTF-8");
-                ent.setContentType("application/xml");
-                if (log.isLoggable(Level.FINEST)) {
-                    log.finest("post " + serviceEndpoint + "\n" + xml.replace("\n", ""));
-                }
-                httppost.setEntity(ent);
-            } else {
-                log.finest("post " + serviceEndpoint);
-            }
-            CloseableHttpResponse response = httpClient.execute(httppost);
+        HttpPost httppost = new HttpPost(serviceEndpoint);
+        if (xml != null) {
+            StringEntity ent = null;
             try {
-                String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                log.finest("post response " + result);
-                return result;
-            } finally {
-                response.close();
+                ent = new StringEntity(xml, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
             }
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed POST " + serviceEndpoint, e);
+            ent.setContentType("application/xml");
+            if (log.isLoggable(Level.FINEST)) {
+                log.finest("post " + serviceEndpoint + "\n" + xml.replace("\n", ""));
+            }
+            httppost.setEntity(ent);
+        } else {
+            log.finest("post " + serviceEndpoint);
         }
+        return execute(httppost);
     }
 
     protected String put(String serviceUrl, String xml) {
         String serviceEndpoint = fullEntityUrl(serviceUrl);
-        try {
-            HttpPut httpput = new HttpPut(serviceEndpoint);
-            if (xml != null) {
-                StringEntity ent = new StringEntity(xml, "UTF-8");
-                ent.setContentType("application/xml");
-                if (log.isLoggable(Level.FINEST)) {
-                    log.finest("put " + serviceEndpoint + "\n" + xml.replace("\n", ""));
-                }
-                httpput.setEntity(ent);
-            } else {
-                log.finest("put " + serviceEndpoint);
-            }
-            CloseableHttpResponse response = httpClient.execute(httpput);
+        HttpPut httpput = new HttpPut(serviceEndpoint);
+        if (xml != null) {
+            StringEntity ent;
             try {
-                String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                log.finest("put response " + result);
-                return result;
-            } finally {
-                response.close();
+                ent = new StringEntity(xml, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
             }
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed PUT " + serviceEndpoint, e);
+            ent.setContentType("application/xml");
+            if (log.isLoggable(Level.FINEST)) {
+                log.finest("put " + serviceEndpoint + "\n" + xml.replace("\n", ""));
+            }
+            httpput.setEntity(ent);
+        } else {
+            log.finest("put " + serviceEndpoint);
         }
+        return execute(httpput);
     }
 
     protected String get(String serviceUrl) {
         String serviceEndpoint = fullEntityUrl(serviceUrl);
-        try {
-            HttpGet get = new HttpGet(serviceEndpoint);
-            CloseableHttpResponse response = httpClient.execute(get);
-            try {
-                String result = EntityUtils.toString(response.getEntity());
-                log.finest("get from " + serviceEndpoint + "\n" + result);
-                return result;
-            } finally {
-                response.close();
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed GET " + serviceEndpoint, e);
-        }
+        return execute(new HttpGet(serviceEndpoint));
     }
 
     public void connect(String domain, String project) {
